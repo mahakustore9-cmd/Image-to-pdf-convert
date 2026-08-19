@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { injectAdCode } from '../../utils/adLoader';
 
 interface AdNativeProps {
   className?: string;
@@ -15,16 +16,7 @@ export const AdNative: React.FC<AdNativeProps> = ({ className = '', slotId = 'na
 
   useEffect(() => {
     if (!nativeCode || !containerRef.current) return;
-
-    try {
-      containerRef.current.innerHTML = '';
-      const scriptTag = document.createElement('script');
-      scriptTag.type = 'text/javascript';
-      scriptTag.text = nativeCode;
-      containerRef.current.appendChild(scriptTag);
-    } catch (e) {
-      console.warn('Adsterra native ad initialization skipped:', e);
-    }
+    injectAdCode(containerRef.current, nativeCode);
   }, [nativeCode]);
 
   if (!nativeCode || nativeCode.trim() === '') {

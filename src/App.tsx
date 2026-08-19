@@ -24,6 +24,9 @@ import { Footer } from './components/Footer';
 import { AdBanner } from './components/ads/AdBanner';
 import { AdNative } from './components/ads/AdNative';
 import { AdFooter } from './components/ads/AdFooter';
+import { AdStickyBottom } from './components/ads/AdStickyBottom';
+import { AdSidebar } from './components/ads/AdSidebar';
+import { AdSocialBar } from './components/ads/AdSocialBar';
 
 // Page components
 import { AboutPage } from './components/pages/AboutPage';
@@ -94,96 +97,100 @@ export default function App() {
 
   // Update Dynamic SEO Tags and Structured Data
   useEffect(() => {
-    const currentMeta: RouteMeta = ROUTES_DATA[currentPath] || ROUTES_DATA['/'];
-    document.title = currentMeta.title;
+    try {
+      const currentMeta: RouteMeta = ROUTES_DATA[currentPath] || ROUTES_DATA['/'];
+      document.title = currentMeta.title;
 
-    // Update Meta Description
-    let descTag = document.querySelector('meta[name="description"]');
-    if (!descTag) {
-      descTag = document.createElement('meta');
-      descTag.setAttribute('name', 'description');
-      document.head.appendChild(descTag);
-    }
-    descTag.setAttribute('content', currentMeta.metaDescription);
+      // Update Meta Description
+      let descTag = document.querySelector('meta[name="description"]');
+      if (!descTag) {
+        descTag = document.createElement('meta');
+        descTag.setAttribute('name', 'description');
+        document.head.appendChild(descTag);
+      }
+      descTag.setAttribute('content', currentMeta.metaDescription);
 
-    // Update Canonical URL
-    let canonicalTag = document.querySelector('link[rel="canonical"]');
-    if (!canonicalTag) {
-      canonicalTag = document.createElement('link');
-      canonicalTag.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalTag);
-    }
-    canonicalTag.setAttribute('href', `https://image-to-pdf-converter.vercel.app${currentPath}`);
+      // Update Canonical URL
+      let canonicalTag = document.querySelector('link[rel="canonical"]');
+      if (!canonicalTag) {
+        canonicalTag = document.createElement('link');
+        canonicalTag.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalTag);
+      }
+      canonicalTag.setAttribute('href', `https://image-to-pdf-converter.vercel.app${currentPath}`);
 
-    // Update or Insert JSON-LD Structured Data
-    const jsonLdId = 'structured-data-jsonld';
-    let scriptTag = document.getElementById(jsonLdId) as HTMLScriptElement | null;
-    if (!scriptTag) {
-      scriptTag = document.createElement('script');
-      scriptTag.id = jsonLdId;
-      scriptTag.type = 'application/ld+json';
-      document.head.appendChild(scriptTag);
-    }
+      // Update or Insert JSON-LD Structured Data
+      const jsonLdId = 'structured-data-jsonld';
+      let scriptTag = document.getElementById(jsonLdId) as HTMLScriptElement | null;
+      if (!scriptTag) {
+        scriptTag = document.createElement('script');
+        scriptTag.id = jsonLdId;
+        scriptTag.type = 'application/ld+json';
+        document.head.appendChild(scriptTag);
+      }
 
-    const structuredData = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebApplication',
-          'name': 'Image to PDF Converter',
-          'url': `https://image-to-pdf-converter.vercel.app${currentPath}`,
-          'description': currentMeta.metaDescription,
-          'applicationCategory': 'UtilitiesApplication',
-          'operatingSystem': 'All',
-          'offers': {
-            '@type': 'Offer',
-            'price': '0',
-            'priceCurrency': 'USD',
+      const structuredData = {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'WebApplication',
+            'name': 'Image to PDF Converter',
+            'url': `https://image-to-pdf-converter.vercel.app${currentPath}`,
+            'description': currentMeta.metaDescription,
+            'applicationCategory': 'UtilitiesApplication',
+            'operatingSystem': 'All',
+            'offers': {
+              '@type': 'Offer',
+              'price': '0',
+              'priceCurrency': 'USD',
+            },
+            'featureList': [
+              'Client-side image to PDF conversion',
+              'Support for JPG, PNG, WEBP',
+              'Reorder pages with drag and drop',
+              'A4, US Letter, and Original sizing',
+              '100% device-side privacy',
+            ],
           },
-          'featureList': [
-            'Client-side image to PDF conversion',
-            'Support for JPG, PNG, WEBP',
-            'Reorder pages with drag and drop',
-            'A4, US Letter, and Original sizing',
-            '100% device-side privacy',
-          ],
-        },
-        {
-          '@type': 'FAQPage',
-          'mainEntity': currentMeta.faqs.map((faq) => ({
-            '@type': 'Question',
-            'name': faq.question,
-            'acceptedAnswer': {
-              '@type': 'Answer',
-              'text': faq.answer,
-            },
-          })),
-        },
-        {
-          '@type': 'BreadcrumbList',
-          'itemListElement': [
-            {
-              '@type': 'ListItem',
-              'position': 1,
-              'name': 'Home',
-              'item': 'https://image-to-pdf-converter.vercel.app/',
-            },
-            ...(currentPath !== '/'
-              ? [
-                  {
-                    '@type': 'ListItem',
-                    'position': 2,
-                    'name': currentMeta.h1,
-                    'item': `https://image-to-pdf-converter.vercel.app${currentPath}`,
-                  },
-                ]
-              : []),
-          ],
-        },
-      ],
-    };
+          {
+            '@type': 'FAQPage',
+            'mainEntity': currentMeta.faqs.map((faq) => ({
+              '@type': 'Question',
+              'name': faq.question,
+              'acceptedAnswer': {
+                '@type': 'Answer',
+                'text': faq.answer,
+              },
+            })),
+          },
+          {
+            '@type': 'BreadcrumbList',
+            'itemListElement': [
+              {
+                '@type': 'ListItem',
+                'position': 1,
+                'name': 'Home',
+                'item': 'https://image-to-pdf-converter.vercel.app/',
+              },
+              ...(currentPath !== '/'
+                ? [
+                    {
+                      '@type': 'ListItem',
+                      'position': 2,
+                      'name': currentMeta.h1,
+                      'item': `https://image-to-pdf-converter.vercel.app${currentPath}`,
+                    },
+                  ]
+                : []),
+            ],
+          },
+        ],
+      };
 
-    scriptTag.text = JSON.stringify(structuredData);
+      scriptTag.textContent = JSON.stringify(structuredData);
+    } catch (e) {
+      console.warn('SEO metadata update failed gracefully:', e);
+    }
   }, [currentPath]);
 
   // Handle incoming file selection
@@ -331,7 +338,14 @@ export default function App() {
   const isSubPage = ['/about', '/privacy', '/terms', '/contact'].includes(currentPath);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900 pb-16">
+      {/* Adsterra Background Scripts (Social Bar / Popunder) */}
+      <AdSocialBar />
+
+      {/* Desktop Floating Sidebars (160x600 skyscraper) */}
+      <AdSidebar position="left" slotId="ad-desktop-left" />
+      <AdSidebar position="right" slotId="ad-desktop-right" />
+
       {/* Top Header */}
       <Navbar currentPath={currentPath} onNavigate={navigate} />
 
@@ -436,6 +450,9 @@ export default function App() {
 
       {/* Global Footer */}
       <Footer onNavigate={navigate} />
+
+      {/* Sticky Bottom Floating Banner Ad */}
+      <AdStickyBottom slotId="ad-sticky-footer-bar" />
     </div>
   );
 }

@@ -18,7 +18,7 @@ A fast, privacy-focused, and mobile-first **Image to PDF Converter** web applica
   - **Custom Filename**: Configurable PDF file names
 - **Mobile First**: Built with responsive layout, large tap targets, and touch-friendly controls.
 - **SEO & Social Metadata**: Dedicated SEO routes (`/`, `/image-to-pdf`, `/jpg-to-pdf`, `/png-to-pdf`, `/photo-to-pdf`, `/images-to-pdf`), OpenGraph, Twitter tags, `sitemap.xml`, `robots.txt`, and JSON-LD structured data.
-- **Adsterra Ready**: Built-in responsive ad slots (`AdBanner`, `AdNative`, `AdFooter`) with zero layout shifts or errors when keys are not configured.
+- **Complete Adsterra & Monetization Suite**: Built-in slots for Top Banner, Middle Native Ad, High-CTR Result Ad (below download button), Sticky Bottom Floating Mobile Banner, Desktop Sidebars, and Social Bar / Popunder scripts. All slots safely collapse when unconfigured.
 
 ---
 
@@ -33,11 +33,38 @@ A fast, privacy-focused, and mobile-first **Image to PDF Converter** web applica
 
 ---
 
+## ⚙️ Monetization & Ad Slots Configuration
+
+Create a `.env` file in the root directory (or use `.env.example` as a template):
+
+```env
+# 1. Top Banner Ad (728x90 or 320x50 banner placed above converter)
+VITE_ADSTERRA_BANNER_CODE=""
+
+# 2. Native Feed Ad (Widget placed mid-page between converter and SEO guide)
+VITE_ADSTERRA_NATIVE_CODE=""
+
+# 3. Post-Conversion Result Ad (High-CTR ad shown inside PDF Ready / Download screen)
+VITE_ADSTERRA_RESULT_CODE=""
+
+# 4. Sticky Bottom Banner (Floating anchor bar on mobile & desktop with close button)
+VITE_ADSTERRA_STICKY_BOTTOM_CODE=""
+
+# 5. Desktop Skyscraper Sidebars (160x600 floating ads on ultra-wide desktop screens)
+VITE_ADSTERRA_SIDEBAR_CODE=""
+
+# 6. Adsterra Social Bar Script (High-performing push/bar format)
+VITE_ADSTERRA_SOCIAL_BAR_CODE=""
+
+# 7. Adsterra Popunder Script (Background tab monetization)
+VITE_ADSTERRA_POPUNDER_CODE=""
+```
+
+*Note: All ad slots are completely optional. If any variable is left blank, the app operates cleanly with zero errors or empty boxes.*
+
+---
+
 ## 🚀 Deploying to Vercel
-
-This repository is pre-configured and ready for one-click deployment on [Vercel](https://vercel.com).
-
-### Step-by-Step Vercel Deployment:
 
 1. Push this project to your GitHub, GitLab, or Bitbucket repository.
 2. Log into **Vercel** and click **"Add New Project"**.
@@ -46,24 +73,8 @@ This repository is pre-configured and ready for one-click deployment on [Vercel]
    - **Framework Preset**: Vite
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
-5. *(Optional)* Add Environment Variables in the Vercel Dashboard:
-   - `VITE_ADSTERRA_BANNER_CODE`: Your Adsterra banner script/code (optional)
-   - `VITE_ADSTERRA_NATIVE_CODE`: Your Adsterra native script/code (optional)
+5. Add your desired Adsterra environment variables under **Project Settings -> Environment Variables**.
 6. Click **"Deploy"**.
-
----
-
-## ⚙️ Environment Variables
-
-Create a `.env` file in the root directory (or use `.env.example` as a template):
-
-```env
-# Optional Adsterra integration (Leave blank if not using ads)
-VITE_ADSTERRA_BANNER_CODE=""
-VITE_ADSTERRA_NATIVE_CODE=""
-```
-
-*Note: If no Adsterra variables are configured, ad components cleanly collapse with zero errors, broken frames, or empty spaces.*
 
 ---
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { injectAdCode } from '../../utils/adLoader';
 
 interface AdBannerProps {
   className?: string;
@@ -15,17 +16,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({ className = '', slotId = 'ba
 
   useEffect(() => {
     if (!bannerCode || !containerRef.current) return;
-
-    try {
-      // Clean previous injections
-      containerRef.current.innerHTML = '';
-      const scriptTag = document.createElement('script');
-      scriptTag.type = 'text/javascript';
-      scriptTag.text = bannerCode;
-      containerRef.current.appendChild(scriptTag);
-    } catch (e) {
-      console.warn('Adsterra banner initialization skipped:', e);
-    }
+    injectAdCode(containerRef.current, bannerCode);
   }, [bannerCode]);
 
   // Gracefully render nothing if no ad script/code is configured

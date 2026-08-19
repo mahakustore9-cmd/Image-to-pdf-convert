@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { injectAdCode } from '../../utils/adLoader';
 
 interface AdFooterProps {
   className?: string;
@@ -14,16 +15,7 @@ export const AdFooter: React.FC<AdFooterProps> = ({ className = '', slotId = 'ad
 
   useEffect(() => {
     if (!bannerCode || !containerRef.current) return;
-
-    try {
-      containerRef.current.innerHTML = '';
-      const scriptTag = document.createElement('script');
-      scriptTag.type = 'text/javascript';
-      scriptTag.text = bannerCode;
-      containerRef.current.appendChild(scriptTag);
-    } catch (e) {
-      console.warn('Adsterra footer ad initialization skipped:', e);
-    }
+    injectAdCode(containerRef.current, bannerCode);
   }, [bannerCode]);
 
   if (!bannerCode || bannerCode.trim() === '') {

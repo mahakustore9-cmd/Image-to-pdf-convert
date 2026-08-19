@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ConversionState } from '../types';
 import { formatBytes } from '../utils/formatters';
 import confetti from 'canvas-confetti';
+import { AdResult } from './ads/AdResult';
 import {
   FileDown,
   Sparkles,
@@ -131,6 +132,9 @@ export const PdfActionBar: React.FC<PdfActionBarProps> = ({
               <span>Preview</span>
             </button>
           </div>
+
+          {/* ADSTERRA POST-CONVERSION AD */}
+          <AdResult slotId="ad-result-download-screen" />
 
           {/* Reset / Convert More Link */}
           <button
