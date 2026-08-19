@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { injectAdCode } from '../../utils/adLoader';
+import React, { useMemo } from 'react';
+import { createAdIframeSrcDoc } from '../../utils/adRenderer';
 
 interface AdResultProps {
   className?: string;
@@ -8,17 +8,17 @@ interface AdResultProps {
 
 /**
  * High CTR ad container displayed on the PDF Ready / Download screen.
+ * Safely isolated via iframe srcDoc.
  */
 export const AdResult: React.FC<AdResultProps> = ({ className = '', slotId = 'ad-result-download' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const resultCode = import.meta.env.VITE_ADSTERRA_RESULT_CODE;
 
-  useEffect(() => {
-    if (!resultCode || !containerRef.current) return;
-    injectAdCode(containerRef.current, resultCode);
+  const srcDoc = useMemo(() => {
+    if (!resultCode || resultCode.trim() === '') return '';
+    return createAdIframeSrcDoc(resultCode, 100);
   }, [resultCode]);
 
-  if (!resultCode || resultCode.trim() === '') {
+  if (!resultCode || resultCode.trim() === '' || !srcDoc) {
     return null;
   }
 
@@ -29,7 +29,13 @@ export const AdResult: React.FC<AdResultProps> = ({ className = '', slotId = 'ad
       aria-label="Sponsored Content"
     >
       <span className="text-[10px] uppercase tracking-wider text-slate-400 mb-1.5 self-center">Sponsored</span>
-      <div ref={containerRef} className="w-full min-h-[90px] flex items-center justify-center" />
+      <iframe
+        title="Result Advertisement"
+        srcDoc={srcDoc}
+        className="w-full border-0 overflow-hidden min-h-[90px]"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        loading="lazy"
+      />
     </div>
   );
 };

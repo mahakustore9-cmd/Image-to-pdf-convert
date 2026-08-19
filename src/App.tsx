@@ -121,14 +121,6 @@ export default function App() {
 
       // Update or Insert JSON-LD Structured Data
       const jsonLdId = 'structured-data-jsonld';
-      let scriptTag = document.getElementById(jsonLdId) as HTMLScriptElement | null;
-      if (!scriptTag) {
-        scriptTag = document.createElement('script');
-        scriptTag.id = jsonLdId;
-        scriptTag.type = 'application/ld+json';
-        document.head.appendChild(scriptTag);
-      }
-
       const structuredData = {
         '@context': 'https://schema.org',
         '@graph': [
@@ -187,7 +179,16 @@ export default function App() {
         ],
       };
 
-      scriptTag.textContent = JSON.stringify(structuredData);
+      let scriptTag = document.getElementById(jsonLdId) as HTMLScriptElement | null;
+      if (!scriptTag) {
+        scriptTag = document.createElement('script');
+        scriptTag.id = jsonLdId;
+        scriptTag.type = 'application/ld+json';
+        scriptTag.textContent = JSON.stringify(structuredData);
+        document.head.appendChild(scriptTag);
+      } else {
+        scriptTag.textContent = JSON.stringify(structuredData);
+      }
     } catch (e) {
       console.warn('SEO metadata update failed gracefully:', e);
     }

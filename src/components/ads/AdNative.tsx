@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { injectAdCode } from '../../utils/adLoader';
+import React, { useMemo } from 'react';
+import { createAdIframeSrcDoc } from '../../utils/adRenderer';
 
 interface AdNativeProps {
   className?: string;
@@ -7,19 +7,18 @@ interface AdNativeProps {
 }
 
 /**
- * Responsive native content ad container for Adsterra integration.
- * If VITE_ADSTERRA_NATIVE_CODE is not provided, renders cleanly without broken frames or layout shifts.
+ * Responsive native content ad container.
+ * Safely isolated via iframe srcDoc to prevent DOM appendChild SyntaxErrors.
  */
 export const AdNative: React.FC<AdNativeProps> = ({ className = '', slotId = 'native-feed' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const nativeCode = import.meta.env.VITE_ADSTERRA_NATIVE_CODE;
 
-  useEffect(() => {
-    if (!nativeCode || !containerRef.current) return;
-    injectAdCode(containerRef.current, nativeCode);
+  const srcDoc = useMemo(() => {
+    if (!nativeCode || nativeCode.trim() === '') return '';
+    return createAdIframeSrcDoc(nativeCode, 140);
   }, [nativeCode]);
 
-  if (!nativeCode || nativeCode.trim() === '') {
+  if (!nativeCode || nativeCode.trim() === '' || !srcDoc) {
     return null;
   }
 
@@ -30,7 +29,13 @@ export const AdNative: React.FC<AdNativeProps> = ({ className = '', slotId = 'na
       aria-label="Partner Content"
     >
       <span className="text-[10px] uppercase tracking-wider text-slate-400 mb-2 self-start">Sponsored</span>
-      <div ref={containerRef} className="w-full min-h-[120px] flex items-center justify-center" />
+      <iframe
+        title="Native Advertisement"
+        srcDoc={srcDoc}
+        className="w-full border-0 overflow-hidden min-h-[120px]"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        loading="lazy"
+      />
     </div>
   );
 };

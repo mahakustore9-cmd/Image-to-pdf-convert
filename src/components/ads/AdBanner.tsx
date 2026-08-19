@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { injectAdCode } from '../../utils/adLoader';
+import React, { useMemo } from 'react';
+import { createAdIframeSrcDoc } from '../../utils/adRenderer';
 
 interface AdBannerProps {
   className?: string;
@@ -7,20 +7,18 @@ interface AdBannerProps {
 }
 
 /**
- * Responsive banner ad container for Adsterra integration.
- * If VITE_ADSTERRA_BANNER_CODE is not provided, renders cleanly without broken frames or empty boxes.
+ * Responsive banner ad container.
+ * Safely isolated via iframe srcDoc to prevent DOM appendChild SyntaxErrors.
  */
 export const AdBanner: React.FC<AdBannerProps> = ({ className = '', slotId = 'banner-top' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const bannerCode = import.meta.env.VITE_ADSTERRA_BANNER_CODE;
 
-  useEffect(() => {
-    if (!bannerCode || !containerRef.current) return;
-    injectAdCode(containerRef.current, bannerCode);
+  const srcDoc = useMemo(() => {
+    if (!bannerCode || bannerCode.trim() === '') return '';
+    return createAdIframeSrcDoc(bannerCode, 90);
   }, [bannerCode]);
 
-  // Gracefully render nothing if no ad script/code is configured
-  if (!bannerCode || bannerCode.trim() === '') {
+  if (!bannerCode || bannerCode.trim() === '' || !srcDoc) {
     return null;
   }
 
@@ -31,7 +29,13 @@ export const AdBanner: React.FC<AdBannerProps> = ({ className = '', slotId = 'ba
       aria-label="Advertisement"
     >
       <span className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Sponsored Advertisement</span>
-      <div ref={containerRef} className="w-full min-h-[50px] md:min-h-[90px] flex items-center justify-center" />
+      <iframe
+        title="Banner Advertisement"
+        srcDoc={srcDoc}
+        className="w-full border-0 overflow-hidden min-h-[60px] sm:min-h-[90px]"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        loading="lazy"
+      />
     </div>
   );
 };

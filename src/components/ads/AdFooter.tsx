@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { injectAdCode } from '../../utils/adLoader';
+import React, { useMemo } from 'react';
+import { createAdIframeSrcDoc } from '../../utils/adRenderer';
 
 interface AdFooterProps {
   className?: string;
@@ -7,18 +7,18 @@ interface AdFooterProps {
 }
 
 /**
- * Responsive footer ad container for Adsterra integration.
+ * Responsive footer ad container.
+ * Safely isolated via iframe srcDoc.
  */
 export const AdFooter: React.FC<AdFooterProps> = ({ className = '', slotId = 'ad-footer-bottom' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const bannerCode = import.meta.env.VITE_ADSTERRA_BANNER_CODE;
 
-  useEffect(() => {
-    if (!bannerCode || !containerRef.current) return;
-    injectAdCode(containerRef.current, bannerCode);
+  const srcDoc = useMemo(() => {
+    if (!bannerCode || bannerCode.trim() === '') return '';
+    return createAdIframeSrcDoc(bannerCode, 90);
   }, [bannerCode]);
 
-  if (!bannerCode || bannerCode.trim() === '') {
+  if (!bannerCode || bannerCode.trim() === '' || !srcDoc) {
     return null;
   }
 
@@ -29,7 +29,13 @@ export const AdFooter: React.FC<AdFooterProps> = ({ className = '', slotId = 'ad
       aria-label="Partner Advertisement"
     >
       <span className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Advertisement</span>
-      <div ref={containerRef} className="w-full min-h-[50px] flex items-center justify-center" />
+      <iframe
+        title="Footer Advertisement"
+        srcDoc={srcDoc}
+        className="w-full border-0 overflow-hidden min-h-[60px] sm:min-h-[90px]"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        loading="lazy"
+      />
     </div>
   );
 };

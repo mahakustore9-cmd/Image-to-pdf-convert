@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { injectAdCode } from '../../utils/adLoader';
+import React, { useMemo } from 'react';
+import { createAdIframeSrcDoc } from '../../utils/adRenderer';
 
 interface AdSidebarProps {
   position?: 'left' | 'right';
@@ -7,19 +7,18 @@ interface AdSidebarProps {
 }
 
 /**
- * Desktop floating sidebar skyscraper banner (160x600 or 300x250).
- * Hidden automatically on tablet/mobile screens.
+ * Desktop floating sidebar skyscraper banner (160x600).
+ * Safely isolated via iframe srcDoc.
  */
 export const AdSidebar: React.FC<AdSidebarProps> = ({ position = 'right', slotId = 'ad-sidebar' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const sidebarCode = import.meta.env.VITE_ADSTERRA_SIDEBAR_CODE;
 
-  useEffect(() => {
-    if (!sidebarCode || !containerRef.current) return;
-    injectAdCode(containerRef.current, sidebarCode);
+  const srcDoc = useMemo(() => {
+    if (!sidebarCode || sidebarCode.trim() === '') return '';
+    return createAdIframeSrcDoc(sidebarCode, 600);
   }, [sidebarCode]);
 
-  if (!sidebarCode || sidebarCode.trim() === '') {
+  if (!sidebarCode || sidebarCode.trim() === '' || !srcDoc) {
     return null;
   }
 
@@ -28,11 +27,17 @@ export const AdSidebar: React.FC<AdSidebarProps> = ({ position = 'right', slotId
   return (
     <aside
       id={`${slotId}-${position}`}
-      className={`hidden 2xl:flex fixed top-28 ${sideClasses} z-20 w-[160px] min-h-[600px] flex-col items-center justify-start bg-slate-50 border border-slate-200/70 rounded-2xl p-2 shadow-sm`}
+      className={`hidden 2xl:flex fixed top-28 ${sideClasses} z-20 w-[160px] min-h-[600px] flex-col items-center justify-start bg-slate-50 border border-slate-200/70 rounded-2xl p-2 shadow-xs`}
       aria-label="Sidebar Advertisement"
     >
       <span className="text-[9px] uppercase tracking-wider text-slate-400 mb-2">Advertisement</span>
-      <div ref={containerRef} className="w-full flex items-center justify-center" />
+      <iframe
+        title="Sidebar Advertisement"
+        srcDoc={srcDoc}
+        className="w-full border-0 overflow-hidden min-h-[600px]"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        loading="lazy"
+      />
     </aside>
   );
 };
