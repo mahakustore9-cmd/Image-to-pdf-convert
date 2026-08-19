@@ -1,0 +1,6 @@
+{
+  "name": "Image to PDF Converter",
+  "description": "Fast, secure, and mobile-friendly client-side converter that turns JPG, PNG, and WEBP images into high-quality PDF files without uploading images to any server.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

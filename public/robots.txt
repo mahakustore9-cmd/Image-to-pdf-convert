@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://image-to-pdf-converter.vercel.app/sitemap.xml
